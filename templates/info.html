@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>📋 Payloads de prueba para esta práctica</h2>
+  <table style="margin-top:8px">
+    <tr><th>Tipo</th><th>Payload</th><th>Ruta</th></tr>
+    <tr>
+      <td><span class="tag tag-danger">Reflejado</span></td>
+      <td><code>&lt;script&gt;alert('XSS Reflejado')&lt;/script&gt;</code></td>
+      <td><code>/vulnerable?q=&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-danger">onerror</span></td>
+      <td><code>&lt;img src=x onerror=alert(document.cookie)&gt;</code></td>
+      <td><code>/vulnerable?q=&lt;img src=x onerror=alert(1)&gt;</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-danger">SVG</span></td>
+      <td><code>&lt;svg onload=alert('SVG')&gt;&lt;/svg&gt;</code></td>
+      <td><code>/vulnerable?q=&lt;svg onload=alert(1)&gt;</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-danger">Almacenado</span></td>
+      <td><code>&lt;script&gt;alert('Almacenado')&lt;/script&gt;</code></td>
+      <td>POST a <code>/almacenado</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-danger">DOM</span></td>
+      <td><code>#&lt;img src=x onerror=alert('DOM')&gt;</code></td>
+      <td><code>/dom#&lt;img src=x onerror=alert(1)&gt;</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-success">Mitigado</span></td>
+      <td>Mismo payload — inofensivo</td>
+      <td><code>/seguro?q=&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>🛡 Resumen de mitigaciones implementadas</h2>
+  <table>
+    <tr><th>Técnica</th><th>Implementación</th><th>Protege contra</th></tr>
+    <tr><td>escape() de markupsafe</td><td>Ruta <code>/seguro</code></td><td>XSS reflejado y almacenado</td></tr>
+    <tr><td>Content-Security-Policy</td><td>Header HTTP en <code>/seguro</code></td><td>Inline scripts, scripts externos</td></tr>
+    <tr><td>X-XSS-Protection</td><td>Header HTTP en <code>/seguro</code></td><td>XSS detectado por el navegador</td></tr>
+    <tr><td>textContent vs innerHTML</td><td>JS en <code>/dom</code> (comentado)</td><td>XSS basado en DOM</td></tr>
+  </table>
+</div>
+{% endblock %}

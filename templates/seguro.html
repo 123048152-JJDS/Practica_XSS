@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="alert-success">
+    ✓ <strong>SEGURO</strong> — El input se sanitiza con <code>markupsafe.escape()</code>
+    antes de renderizarse. Los caracteres &lt; &gt; " ' se convierten en entidades HTML.
+  </div>
+  <h2>🔍 Buscar artículos (versión segura)</h2>
+  <form method="GET" action="{{ url_for('seguro') }}">
+    <label for="q">Término de búsqueda:</label>
+    <input type="text" id="q" name="q" value="{{ query_safe }}"
+           placeholder="El mismo payload no funcionará aquí" autocomplete="off">
+    <button type="submit">Buscar</button>
+  </form>
+
+  {% if query_safe %}
+  <div class="result-box">
+    Resultados para: <strong>{{ query_safe }}</strong>
+  </div>
+  <div class="alert-info" style="margin-top:12px; font-family:monospace; font-size:12px">
+    Input recibido: {{ raw_input }}<br>
+    Después de escape(): {{ query_safe }}
+  </div>
+  <div class="code" style="margin-top:12px">
+    <span class="cm"># Código SEGURO en routes.py:</span><br>
+    <span class="kw">from</span> markupsafe <span class="kw">import</span> escape<br>
+    safe = escape(request.args.get(<span class="str">'q'</span>, <span class="str">''</span>))<br>
+    <span class="kw">return</span> render_template(<span class="str">'seguro.html'</span>, query_safe=safe)
+  </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>🛡 Headers de seguridad activos</h2>
+  <table>
+    <tr><th>Header HTTP</th><th>Valor</th><th>Efecto</th></tr>
+    <tr><td>Content-Security-Policy</td><td><code>default-src 'self'</code></td><td>Bloquea scripts externos e inline</td></tr>
+    <tr><td>X-XSS-Protection</td><td><code>1; mode=block</code></td><td>Activa filtro XSS del navegador</td></tr>
+    <tr><td>X-Content-Type-Options</td><td><code>nosniff</code></td><td>Evita MIME sniffing</td></tr>
+  </table>
+</div>
+{% endblock %}

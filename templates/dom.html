@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="alert-danger">
+    ⚠ <strong>XSS basado en DOM</strong> — El servidor no interviene. JavaScript del lado
+    cliente lee <code>location.hash</code> y lo escribe con <code>innerHTML</code>. El servidor
+    entrega HTML limpio, pero el ataque ocurre en el navegador.
+  </div>
+  <h2>⚙ Bienvenida dinámica (DOM)</h2>
+  <div id="welcome" class="result-box">Cargando...</div>
+  <div class="alert-info" style="margin-top:12px; font-size:13px">
+    Para explotar, agrega al URL:<br>
+    <code>#&lt;img src=x onerror=alert('DOM XSS')&gt;</code>
+  </div>
+  <div class="code" style="margin-top:12px">
+    <span class="cm">// JavaScript VULNERABLE (DOM):</span><br>
+    <span class="kw">const</span> name = location.hash.slice(1);<br>
+    document.getElementById(<span class="str">'welcome'</span>).innerHTML = <span class="str">'Hola, '</span> + name; <span class="cm">// ← innerHTML sin escape</span><br><br>
+    <span class="cm">// JavaScript SEGURO:</span><br>
+    document.getElementById(<span class="str">'welcome'</span>).textContent = <span class="str">'Hola, '</span> + name; <span class="cm">// ← textContent es seguro</span>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/dom_vuln.js') }}"></script>
+{% endblock %}

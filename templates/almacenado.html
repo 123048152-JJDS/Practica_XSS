@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="alert-danger">
+    ⚠ <strong>XSS ALMACENADO</strong> — Los comentarios se guardan en una tabla
+    PostgreSQL (<code>comentarios</code>) y se renderizan sin escape. El payload
+    queda persistido en disco y se ejecuta para TODOS los visitantes, incluso
+    después de reiniciar la aplicación.
+  </div>
+  <h2>💬 Comentarios del artículo</h2>
+
+  {% for c in comentarios %}
+  <div class="comment">
+    <strong>{{ c.autor }}</strong>
+    <span style="color:#888; font-size:11px; margin-left:6px">{{ c.fecha.strftime('%d/%m/%Y %H:%M') if c.fecha else '' }}</span><br>
+    <span>{{ c.texto_html | safe }}</span>
+  </div>
+  {% endfor %}
+
+  <form method="POST" action="{{ url_for('almacenado') }}" style="margin-top:16px">
+    <label>Tu nombre:</label>
+    <input type="text" name="autor" placeholder="Nombre" style="margin-bottom:8px">
+    <label>Comentario:</label>
+    <input type="text" name="texto" placeholder='<script>alert("XSS Almacenado")</script>' autocomplete="off">
+    <button type="submit">Publicar comentario</button>
+  </form>
+</div>
+{% endblock %}

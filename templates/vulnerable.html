@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="alert-danger">
+    ⚠ <strong>VULNERABLE</strong> — El input del usuario se inserta directamente en el HTML
+    usando <code>render_template_string</code> con autoescape desactivado a propósito.
+    Cualquier script se ejecutará.
+  </div>
+  <h2>🔍 Buscar artículos</h2>
+  <form method="GET" action="{{ url_for('vulnerable') }}">
+    <label for="q">Término de búsqueda:</label>
+    <input type="text" id="q" name="q" value="{{ query_raw }}"
+           placeholder="Intenta: &lt;script&gt;alert('XSS')&lt;/script&gt;" autocomplete="off">
+    <button type="submit">Buscar</button>
+  </form>
+
+  {% if query_raw %}
+  <div class="result-box">
+    Resultados para: {{ resultado_html | safe }}
+  </div>
+  <div class="code" style="margin-top:12px">
+    <span class="cm"># Código VULNERABLE en routes.py:</span><br>
+    html = <span class="str">f"Resultados para: {query_raw}"</span> <span class="cm"># ← sin escapar</span><br>
+    <span class="kw">return</span> render_template(<span class="str">'vulnerable.html'</span>, resultado_html=html)
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} — BlogApp</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav>
+  <span class="brand">📰 BlogApp UPQ</span>
+  <span class="badge" style="background: {{ badge_color }}">{{ badge_text }}</span>
+</nav>
+<div class="container">
+  <div class="tabs">
+    <a href="{{ url_for('vulnerable') }}" class="tab-btn {{ 'active' if active == 'vuln' else '' }}">🔓 Vulnerable (XSS)</a>
+    <a href="{{ url_for('seguro') }}" class="tab-btn {{ 'active' if active == 'seg' else '' }}">🔒 Seguro (Mitigado)</a>
+    <a href="{{ url_for('almacenado') }}" class="tab-btn {{ 'active' if active == 'alm' else '' }}">💾 XSS Almacenado</a>
+    <a href="{{ url_for('dom') }}" class="tab-btn {{ 'active' if active == 'dom' else '' }}">⚙ XSS DOM</a>
+    <a href="{{ url_for('info') }}" class="tab-btn {{ 'active' if active == 'info' else '' }}">📋 Payloads</a>
+  </div>
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>
